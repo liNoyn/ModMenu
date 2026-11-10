@@ -1,0 +1,17 @@
+/.xmake/
+/build/
+/dist/
+/artifacts/
+/cache/
+/config/
+/logs/
+/.vs/
+.env
+.env.*
+*.pdb
+*.ilk
+*.obj
+*.dll
+*.exe
+*.zip
+*.user

@@ -1,0 +1,17 @@
+{
+    "name": "ModMenu",
+    "entry": "ModMenu.dll",
+    "version": "0.1.0",
+    "type": "preload-native",
+    "platform": "client",
+    "description": "前提Mod",
+    "author": "Noyn",
+    "modmenu": {
+        "license": "MIT",
+        "links": {
+            "source": "https://github.com/liNoyn/ModMenu",
+            "issues": "https://github.com/liNoyn/ModMenu/issues"
+        },
+        "icon": "assets/icon.png"
+    }
+}

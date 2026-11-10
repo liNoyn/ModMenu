@@ -1,0 +1,48 @@
+name: Windows build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: xmake-io/github-action-setup-xmake@3a1a5dddfc7fa625d9a698738334bf55655a861a # v1
+        with:
+          xmake-version: '3.1.2'
+      - name: Configure
+        run: xmake f -a x64 -m release -p windows -y
+      - name: Build
+        run: xmake -y
+      - name: Build model tests
+        run: xmake build ModelTests
+      - name: Run model tests
+        run: .\build\windows\x64\release\ModelTests.exe
+      - name: Package
+        run: ./tools/package.ps1 -SkipBuild
+      - name: Check release tag
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $manifest = Get-Content dist/ModMenu/manifest.json -Raw | ConvertFrom-Json
+          if ($env:RELEASE_TAG -ne ('v' + $manifest.version)) { throw 'Tag and build version differ' }
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ModMenu-windows-x64
+          path: artifacts/*
+          if-no-files-found: error
